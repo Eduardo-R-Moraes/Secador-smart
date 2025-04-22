@@ -29,7 +29,7 @@ Este projeto simula um "secador de cabelo inteligente" que economiza energia uti
 
 ## Lógica do Código (fluxograma)
 
-> \![Fluxograma](./imgs/fluxograma.png)
+> \ ![Fluxograma](assets/fluxograma.png)
 
 ## Teste e Validação
 
