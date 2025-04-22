@@ -27,9 +27,9 @@ Este projeto simula um "secador de cabelo inteligente" que economiza energia uti
 
 ## Esquema de Ligação (Wiring)
 
-> \<imagem/>
-
 ## Lógica do Código (fluxograma)
+
+> \<img src="./imgs/fluxograma.png"/>
 
 ## Teste e Validação
 
