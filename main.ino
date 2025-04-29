@@ -1,45 +1,57 @@
-#include "Ultrasonic.h"
-#define fail_pin 6
+#include <NewPing.h>
 
-HC_SR04 sensor_true(8, 12);
-HC_SR04 sensor_backup(2, 3);
+#define TRIG_TRUE 3
+#define ECHO_TRUE 2
+#define TRIG_BACKUP 12
+#define ECHO_BACKUP 8
+#define MAX_DISTANCE 400
 
-int on = 5;
-int off = 4;
-int backup = 7;
-int distance;
+NewPing sensor_true(TRIG_TRUE, ECHO_TRUE, MAX_DISTANCE);
+NewPing sensor_backup(TRIG_BACKUP, ECHO_BACKUP, MAX_DISTANCE);
+
+#define LED_ON 5
+#define LED_OFF 4
+#define LED_BACKUP 7
+#define BUTTON_FAIL 6
 
 void setup() {
-  pinMode(on, OUTPUT);
-  pinMode(off, OUTPUT);
-  pinMode(backup, OUTPUT);
+  pinMode(LED_ON, OUTPUT);
+  pinMode(LED_OFF, OUTPUT);
+  pinMode(LED_BACKUP, OUTPUT);
+  pinMode(BUTTON_FAIL, INPUT_PULLUP);
 
-  pinMode(fail_pin, INPUT_PULLUP);
   Serial.begin(9600);
-
 }
 
 void loop() {
-  bool fail = digitalRead(fail_pin);
+  bool fail = digitalRead(BUTTON_FAIL) == LOW;  // Pressionado = falha
+
+  Serial.print("Falha: ");
   Serial.println(fail);
 
-  if(!fail){
-    distance = sensor_true.distance();
-    digitalWrite(backup, LOW);
-  }
-  else{
-    digitalWrite(backup, HIGH);
-    distance=sensor_backup.distance();
+  digitalWrite(LED_ON, HIGH);  // Sempre começa com ligado
+
+  int distance;
+  if (fail) {
+    distance = sensor_true.ping_cm();
+    digitalWrite(LED_BACKUP, LOW);
+  } else {
+    distance = sensor_backup.ping_cm();
+    digitalWrite(LED_BACKUP, HIGH);
   }
 
-  if (distance>=35) {
-    digitalWrite(on, LOW);
-    digitalWrite(off, HIGH);
+  Serial.print("Distância: ");
+  Serial.println(distance);
+
+  if (distance > 0 && distance < MAX_DISTANCE) {
+    if (distance >= 35) {
+      digitalWrite(LED_ON, LOW);
+      digitalWrite(LED_OFF, HIGH);
+    } else {
+      digitalWrite(LED_ON, HIGH);
+      digitalWrite(LED_OFF, LOW);
+    }
   }
-  else (distance<35) {
-    digitalWrite(on, HIGH);
-    digitalWrite(off, LOW);
-  }
-  
+
   delay(300);
 }
